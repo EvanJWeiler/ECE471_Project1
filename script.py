@@ -45,6 +45,7 @@ def typeOfCipher(text):
 
 
 def shiftCipher(text):
+
     pass
 
 
@@ -78,6 +79,6 @@ def main():
     frequencyAnalysis(text)
 
     dataFile.close()
-    #test
+
 
 main()
