@@ -104,9 +104,12 @@ def vigenereCipher():
 def permutationCipher():
     gridForm = []
     #arranging text in grid
-    for i in range(len(textList)/197):
+    for i in range(0, 13):
         row = []
-        for j in range(len(textList)/17):
+        for j in range(0, 257):
+            #if((i+1)*(j+1) > len(textList)):
+            #    row.append("&")
+            #else:
             row.append(textList[(i+1)*(j+1) - 1])
         gridForm.append(row)
 
@@ -116,7 +119,12 @@ def permutationCipher():
     for i in range(len(gridForm)):
         for j in range(len(gridForm[i])):
             sys.stdout.write(''.join(gridForm[i][j]))
-        print
+        print()
+
+    #theory
+    #make ciphertext into grid
+    #transpose grid [list(i) for i in zip(*theArray)]
+    #add each row onto each other
 
 
 
