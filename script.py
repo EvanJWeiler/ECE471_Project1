@@ -89,7 +89,8 @@ def subCipher():
 
 
 def vigenereCipher():
-    pass
+    key = "KEY"
+    shiftNumber = ord('E') - ord(currentMax)
 
 
 def permutationCipher():
@@ -110,6 +111,5 @@ def main():
     #printFrequency(digrams)
     indexOfCoincidence()
 
-    subCipher()
 
 main()
