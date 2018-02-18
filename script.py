@@ -10,6 +10,7 @@ trigrams = {}
 
 dataFile = open(sys.argv[1], 'r')
 text = dataFile.read()
+textList = list(text)
 dataFile.close()
 
 def frequencyAnalysis():
@@ -52,17 +53,24 @@ def shiftCipher():
     currentMax = 0
     shiftNumber = 0
 
-    for x in monograms:
-        if monograms[x] > currentMax:
-            currentMax = x
+    sortedMono = sorted(monograms, key=monograms.get, reverse=True)
 
-    import pdb; pdb.set_trace()
+    shiftNumber = ord(sortedMono[0]) - ord('E')
 
-    shiftNumber = ord('E') - ord(currentMax)
+    if(shiftNumber < 0):
+        shiftNumber += 26
 
-    print(shiftNumber)
+    # import pdb; pdb.set_trace()
 
-    return shiftNumber
+    for x in range(0, len(textList)):
+        if (ord(textList[x]) - shiftNumber) < 65:
+            textList[x] = chr(ord(textList[x]) - shiftNumber + 26)
+        else:
+            textList[x] = chr(ord(textList[x]) - shiftNumber)
+
+    textString = ''.join(textList)
+
+    return textString
 
 
 def subCipher():
@@ -108,8 +116,9 @@ def main():
 
     #printFrequency(monograms)
     #printFrequency(digrams)
-    indexOfCoincidence()
+    #indexOfCoincidence()
 
-    subCipher()
+    #subCipher()
+    print(shiftCipher())
 
 main()
