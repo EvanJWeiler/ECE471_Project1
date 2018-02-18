@@ -60,7 +60,7 @@ def shiftCipher():
     if(shiftNumber < 0):
         shiftNumber += 26
 
-    # import pdb; pdb.set_trace()
+
 
     for x in range(0, len(textList)):
         if (ord(textList[x]) - shiftNumber) < 65:
@@ -101,6 +101,24 @@ def vigenereCipher():
 
 
 def permutationCipher():
+    gridForm = []
+    #arranging text in grid
+    for i in range(len(textList)/197):
+        row = []
+        for j in range(len(textList)/17):
+            row.append(textList[(i+1)*(j+1) - 1])
+        gridForm.append(row)
+
+    #import pdb; pdb.set_trace()
+
+    #print text in grid
+    for i in range(len(gridForm)):
+        for j in range(len(gridForm[i])):
+            sys.stdout.write(''.join(gridForm[i][j]))
+        print
+
+
+
     pass
 
 
@@ -121,7 +139,8 @@ def main():
     # indexOfCoincidence()
 
     # subCipher()
-    print(shiftCipher())
+    #print(shiftCipher())
+    permutationCipher()
 
 
 main()
