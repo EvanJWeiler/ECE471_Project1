@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import operator
 
 
 monograms = {}
@@ -43,7 +44,6 @@ def indexOfCoincidence():
     val = round(val, 5)
     print "IC: " + str(val)
 
-
 def typeOfCipher():
     pass
 
@@ -54,6 +54,25 @@ def shiftCipher():
 
 
 def subCipher():
+    #key = "ETAOINSHRDLUCMWFYGPBVKXJQZ"
+    #alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    #newText = text
+    #print monograms
+    #stortedMono = sorted(monograms, key=monograms.get, reverse=True)
+    #print stortedMono
+    #print newText
+    #keyIndices = [stortedMono.index(k) for k in newText]
+    #print keyIndices
+    #print ''.join(key[keyIndex] for keyIndex in keyIndices)
+    #print newText
+    #
+    #print stortedMono
+    #counter = 0;
+    #print newText
+    #for x in stortedMono:
+    #    newText = newText.replace(x, key[counter])
+    #    counter += 1
+    #print newText
     pass
 
 
@@ -75,9 +94,10 @@ def printFrequency(object):
 def main():
     frequencyAnalysis()
 
-    printFrequency(monograms)
-    printFrequency(digrams)
-
+    #printFrequency(monograms)
+    #printFrequency(digrams)
     indexOfCoincidence()
+
+    subCipher()
 
 main()
