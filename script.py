@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import operator
+from math import sqrt
 
 
 monograms = {}
@@ -23,7 +24,7 @@ def frequencyAnalysis():
             monograms[x] = 1
 
     # digrams
-    for i, j in zip(text[::2], text[1::2]):
+    for i, j in zip(text[::1], text[1::1]):
         key = i + j
         if digrams.has_key(key):
             digrams[key] += 1
@@ -31,12 +32,16 @@ def frequencyAnalysis():
             digrams[key] = 1
 
     # trigrams
-    for i, j, k in zip(text[::2], text[1::2], text[2::3]):
+    # for vigenere first find repeating trigrams
+    index = 0
+    for i, j, k in zip(text[::1], text[1::1], text[2::1]):
         key = i + j + k
         if trigrams.has_key(key):
-            trigrams[key] += 1
+            trigrams[key][0] += 1
+            trigrams[key].append(index)
         else:
-            trigrams[key] = 1
+            trigrams[key] = [1, index]
+        index += 1
 
 
 def indexOfCoincidence():
@@ -97,8 +102,66 @@ def subCipher():
 
 
 def vigenereCipher():
-    key = "KEY"
-    shiftNumber = ord('E') - ord(currentMax)
+    factors = {}
+    indexSpacing = []
+    for x in trigrams:
+        if trigrams[x][0] > 1:
+            #find spacing between these trigrams
+            for index in range(1, len(trigrams[x])):
+                for index2 in range(index+1, len(trigrams[x])):
+                    indexSpacing.append(trigrams[x][index2] - trigrams[x][index])
+    indexSpacing = list(set(indexSpacing))
+    #then find the factors of the spacing
+    for indexSpace in indexSpacing:
+        for i in range(2, indexSpace + 1):
+           if indexSpace % i == 0:
+               if factors.has_key(i):
+                   factors[i] += 1
+               else:
+                   factors[i] = 1
+    #factor with the most hits is the length of the key
+    maxFactor = 0
+    keyLengths = []
+    maxFactor = factors[sorted(factors, key=factors.get, reverse=True)[0]]
+    for x in factors:
+        if factors[x] == maxFactor:
+            keyLengths.append(x)
+
+
+    #get every Nth letter from string into their own string
+    #for keyLength in keyLengths:
+    keyLength = 4
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for iteration in range(keyLength):
+        origTextList = []
+        for x in text[iteration::keyLength]:
+            origTextList.append(x)
+        for shiftNumber in range(26):
+            textList = list(origTextList)
+            for x in range(0, len(textList)):
+                if (ord(textList[x]) - shiftNumber) < 65:
+                    textList[x] = chr(ord(textList[x]) - shiftNumber + 26)
+                else:
+                    textList[x] = chr(ord(textList[x]) - shiftNumber)
+            shiftedString = {}
+            textString = ''.join(textList)
+            for character in textString:
+                if shiftedString.has_key(character):
+                    shiftedString[character] += 1
+                else:
+                    shiftedString[character] = 1
+            sorted(shiftedString, key=shiftedString.get, reverse=True)
+
+            # if best 6 = E, T, A, O, I, N
+                #score +1
+            # if worst 6 = V, K, J, X, Q, or Z
+                #score +1
+
+
+
+    #do frequency analysis and see which is most like english
+    #whichever character makes it most like english is the one that is the right one
+
 
 
 def permutationCipher():
@@ -140,8 +203,8 @@ def main():
     # indexOfCoincidence()
 
     # subCipher()
-    #print(shiftCipher())
-    permutationCipher()
-
+    #print shiftCipher()
+    #permutationCipher()
+    vigenereCipher()
 
 main()
