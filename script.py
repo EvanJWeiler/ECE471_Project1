@@ -3,15 +3,13 @@ import sys
 import random
 
 
-# monograms
 monograms = {}
-
-# digrams
 digrams = {}
+trigrams = {}
 
 dataFile = open(sys.argv[1], 'r')
 text = dataFile.read()
-
+dataFile.close()
 
 def frequencyAnalysis():
     #monograms
@@ -21,11 +19,6 @@ def frequencyAnalysis():
         else:
             monograms[x] = 1
 
-    for key in monograms:
-        monograms[key] = round(((float(monograms[key]) / (len(text)-1)) * 100) , 2)
-
-    for key in monograms:
-        print key, monograms[key]
     #digrams
     for i, j in zip(text[::2], text[1::2]):
         key = i + j
@@ -34,20 +27,21 @@ def frequencyAnalysis():
         else:
             digrams[key] = 1
 
-    for key in digrams:
-        digrams[key] = round(((float(digrams[key]) / (len(text)-1)) * 100) , 2)
-
-    for key in sorted(digrams):
-        print key, digrams[key]
-
-
+    #trigrams
+    for i, j, k in zip(text[::2], text[1::2], text[2::3]):
+        key = i + j + k
+        if trigrams.has_key(key):
+            trigrams[key] += 1
+        else:
+            trigrams[key] = 1
 
 def indexOfCoincidence():
     # index of Coincidence
     val = 0
     for x in monograms:
-        val += (monograms[x]/100) * (monograms[x]/100)
-    print val
+        val += (float(monograms[x]) / (len(text)-1)) ** 2
+    val = round(val, 5)
+    print "IC: " + str(val)
 
 
 def typeOfCipher():
@@ -64,17 +58,7 @@ def subCipher():
 
 
 def vigenereCipher():
-    trigrams = {}
-    for i, j, k in zip(text[::2], text[1::2], text[2::3]):
-        key = i+j+k
-        if monograms.has_key(key):
-            monograms[key] += 1
-        else:
-            monograms[key] = 1
-
-    for key in sorted(monograms):
-        if len(key) == 3:
-            print key, monograms[key]
+    pass
 
 
 def permutationCipher():
@@ -84,11 +68,16 @@ def permutationCipher():
 def oneTimePad():
     pass
 
+def printFrequency(object):
+    for key in sorted(object):
+        print key, round(((float(object[key]) / (len(text)-1)) * 100) , 2)
 
 def main():
     frequencyAnalysis()
-    indexOfCoincidence()
-    dataFile.close()
 
+    printFrequency(monograms)
+    printFrequency(digrams)
+
+    indexOfCoincidence()
 
 main()
