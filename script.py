@@ -13,6 +13,7 @@ text = dataFile.read()
 textList = list(text)
 dataFile.close()
 
+
 def frequencyAnalysis():
     # monograms
     for x in text:
@@ -21,7 +22,7 @@ def frequencyAnalysis():
         else:
             monograms[x] = 1
 
-    #digrams
+    # digrams
     for i, j in zip(text[::2], text[1::2]):
         key = i + j
         if digrams.has_key(key):
@@ -29,7 +30,7 @@ def frequencyAnalysis():
         else:
             digrams[key] = 1
 
-    #trigrams
+    # trigrams
     for i, j, k in zip(text[::2], text[1::2], text[2::3]):
         key = i + j + k
         if trigrams.has_key(key):
@@ -37,24 +38,23 @@ def frequencyAnalysis():
         else:
             trigrams[key] = 1
 
+
 def indexOfCoincidence():
     # index of Coincidence
     val = 0
     for x in monograms:
-        val += (float(monograms[x]) / (len(text)-1)) ** 2
+        val += (float(monograms[x]) / (len(text) - 1)) ** 2
     val = round(val, 5)
     print "IC: " + str(val)
+
 
 def typeOfCipher():
     pass
 
 
 def shiftCipher():
-    currentMax = 0
     shiftNumber = 0
-
     sortedMono = sorted(monograms, key=monograms.get, reverse=True)
-
     shiftNumber = ord(sortedMono[0]) - ord('E')
 
     if(shiftNumber < 0):
@@ -89,7 +89,7 @@ def subCipher():
     #print stortedMono
     #counter = 0;
     #print newText
-    #for x in stortedMono:
+    # for x in stortedMono:
     #    newText = newText.replace(x, key[counter])
     #    counter += 1
     #print newText
@@ -107,18 +107,21 @@ def permutationCipher():
 def oneTimePad():
     pass
 
+
 def printFrequency(object):
     for key in sorted(object):
-        print key, round(((float(object[key]) / (len(text)-1)) * 100) , 2)
+        print key, round(((float(object[key]) / (len(text) - 1)) * 100), 2)
+
 
 def main():
     frequencyAnalysis()
 
-    #printFrequency(monograms)
-    #printFrequency(digrams)
-    #indexOfCoincidence()
+    # printFrequency(monograms)
+    # printFrequency(digrams)
+    # indexOfCoincidence()
 
-    #subCipher()
+    # subCipher()
     print(shiftCipher())
+
 
 main()
