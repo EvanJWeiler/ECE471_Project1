@@ -25,6 +25,7 @@ def frequencyAnalysis(text):
                 print key, monograms[key]
 
 
+
 def indexOfCoincidence(monograms):
     #index of Coincidence
     pass
