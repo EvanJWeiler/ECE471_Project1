@@ -14,7 +14,7 @@ text = dataFile.read()
 
 
 def frequencyAnalysis():
-    #monograms
+    # monograms
     for x in text:
         if monograms.has_key(x):
             monograms[x] += 1
@@ -22,11 +22,11 @@ def frequencyAnalysis():
             monograms[x] = 1
 
     for key in monograms:
-        monograms[key] = round(((float(monograms[key]) / (len(text)-1)) * 100) , 2)
+        monograms[key] = round(((float(monograms[key]) / (len(text)-1)) * 100), 2)
 
     for key in monograms:
         print key, monograms[key]
-    #digrams
+    # digrams
     for i, j in zip(text[::2], text[1::2]):
         key = i + j
         if digrams.has_key(key):
@@ -35,11 +35,10 @@ def frequencyAnalysis():
             digrams[key] = 1
 
     for key in digrams:
-        digrams[key] = round(((float(digrams[key]) / (len(text)-1)) * 100) , 2)
+        digrams[key] = round(((float(digrams[key]) / (len(text)-1)) * 100), 2)
 
     for key in sorted(digrams):
         print key, digrams[key]
-
 
 
 def indexOfCoincidence():
@@ -55,8 +54,20 @@ def typeOfCipher():
 
 
 def shiftCipher():
+    currentMax = 0
+    shiftNumber = 0
 
-    pass
+    for x in monograms:
+        if monograms[x] > currentMax:
+            currentMax = x
+
+    import pdb; pdb.set_trace()
+
+    shiftNumber = ord('E') - ord(currentMax)
+
+    print(shiftNumber)
+
+    return shiftNumber
 
 
 def subCipher():
@@ -89,6 +100,7 @@ def main():
     frequencyAnalysis()
     indexOfCoincidence()
     dataFile.close()
+    shiftCipher()
 
 
 main()
