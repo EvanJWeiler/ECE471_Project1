@@ -46,7 +46,7 @@ def indexOfCoincidence():
     # index of Coincidence
     val = 0
     for x in monograms:
-        val += monograms[x] * monograms[x]
+        val += (monograms[x]/100) * (monograms[x]/100)
     print val
 
 
