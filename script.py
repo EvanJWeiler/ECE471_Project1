@@ -250,28 +250,6 @@ def permutationCipher(keyLength):
     transposeGridFormOneLineString = transposeGridFormOneLineString.replace("&", "") #removing placeholder characters
 
     print(transposeGridFormOneLineString)
-    #print(transposeGridFormOneLineString)
-    #print(transposeGridFormOneLineString.count("THE"))
-
-
-
-
-
-
-
-
-    #print text in grid
-    # for i in range(len(gridForm)):
-    #     for j in range(len(gridForm[i])):
-    #         sys.stdout.write(''.join(gridForm[i][j]))
-    #     print()
-
-    #theory
-    #make ciphertext into grid
-    #transpose grid [list(i) for i in zip(*theArray)]
-    #add each row onto each other
-
-
 
     pass
 
