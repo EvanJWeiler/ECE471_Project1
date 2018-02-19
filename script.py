@@ -252,10 +252,27 @@ def permutationCipher():
 
     pass
 
+def waitForUser():
+    wait = True
+    correct = raw_input("Would you like to proceed? (y/n) ")
+    while wait:
+        if correct == 'y':
+            running = False
+            return 1
+        elif correct == 'n':
+            print "Goodbye."
+            running = False
+            return 0
+        else:
+            correct = raw_input("Invalid input, Please try again: (y/n) ")
+
 
 def main():
     frequencyAnalysis()
     CipherType = typeOfCipher()
+    terminate = waitForUser()
+    if terminate == 0:
+        return
     if CipherType == 0:
         shiftCipher()
         correct = raw_input("Is this correct? (y/n) ")
@@ -293,6 +310,9 @@ def main():
                     return
                 elif correct == 'n' and solution != possibleSolutions[len(possibleSolutions)-1]:
                     print "Here is another possible answer:\n"
+                    terminate = waitForUser()
+                    if terminate == 0:
+                        return
                     running = False
                 elif correct == 'n' and solution == possibleSolutions[len(possibleSolutions)-1]:
                     print "The code must be encoded with a One Time Pad or a Permutation Cipher."
