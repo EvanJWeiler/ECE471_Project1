@@ -1,7 +1,8 @@
-import pygame
+#import pygame
 import sys
 import random
 import operator
+import math
 from math import sqrt
 
 
@@ -180,35 +181,74 @@ def vigenereCipher():
 
 
 
-def permutationCipher():
+def permutationCipher(keyLength):
     gridForm = []
-    #arranging text in grid
-    # for i in range(0, 14):
-    #     row = []
-    #     for j in range(0, 259):
-    #         if((i+1)*(j+1) > len(textList)):
-    #             row.append("&")
-    #         else:
-    #             row.append(textList[(i+1)*(j+1) - 1])
-    #     gridForm.append(row)
-
     row = []
+    currWordMax = 0
+    wordMaxKeyLength = 0
     #row.append(textList[0])
-
-    for i in range(0, len(textList)):
-        if(i % 258 == 0):
-            gridForm.append(row)
-            row = []
-
-        row.append(textList[i])
-
-
+    #3349 characters (len(textList))
+    #8x258 (#ofchar)mod(keylength)x(ceil(characters/keylength))
+    #5x257 [keylength - (#ofchar)mod(keylength)]x(floor(characters/keylength))
 
     #import pdb; pdb.set_trace()
 
-    #gridForm.append(row)
-    for i in range(0, len(gridForm)):
-        print(''.join(gridForm[i]))
+    #begin
+    fullLines = len(textList) % keyLength #8
+    fullLinesLength = math.ceil(len(textList)/float(keyLength)) #258
+    shortLines = (keyLength - (len(textList) % keyLength)) #5
+    shortLinesLength = math.floor(len(textList)/float(keyLength)) #257
+    midPoint = int(len(textList) - shortLines*shortLinesLength) #2064
+
+    #import pdb; pdb.set_trace()
+    if(fullLines == 0):
+        row.append(textList[0])
+        for i in range(1, len(textList)):
+            if(i % fullLinesLength == 0):
+                gridForm.append(row)
+                row = []
+
+            row.append(textList[i])
+
+    else:
+        row.append(textList[0])
+        for i in range(1, midPoint):
+            if(i % fullLinesLength == 0):
+                gridForm.append(row)
+                row = []
+
+            row.append(textList[i])
+
+        for j in range(midPoint, len(textList)):
+            if((j-midPoint) % shortLinesLength == 0):
+                gridForm.append(row)
+                row = []
+
+            row.append(textList[j])
+
+        gridForm.append(row)
+
+        for i in range(len(textList)%keyLength, keyLength):
+            gridForm[i].append("&")
+
+
+    transposeGridForm = [list(i) for i in zip(*gridForm)] #transpose matrix
+    transposeGridFormOneLine = [y for x in transposeGridForm for y in x] #flatten transposed matrix
+
+    transposeGridFormOneLineString = ''.join(transposeGridFormOneLine) #converting to string
+    transposeGridFormOneLineString = transposeGridFormOneLineString.replace("&", "") #removing placeholder characters
+
+    #import pdb; pdb.set_trace()
+    #wordMax = transposeGridFormOneLineString.count("THE") + transposeGridFormOneLineString.count("AND")
+    # if(transposeGridFormOneLineString.count("THE") > currWordMax):
+    #     currWordMax = transposeGridFormOneLineString.count("THE")
+    #     wordMaxKeyLength = keyLength
+
+    #end
+
+    print(transposeGridFormOneLineString)
+    #print(transposeGridFormOneLineString)
+    #print(transposeGridFormOneLineString.count("THE"))
 
 
 
@@ -251,7 +291,7 @@ def main():
 
     # subCipher()
     #print shiftCipher()
-    permutationCipher()
+    permutationCipher(14)
     #vigenereCipher()
 
 main()
