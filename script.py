@@ -104,6 +104,7 @@ def subCipher():
 def vigenereCipher():
     factors = {}
     indexSpacing = []
+    maybeKeys = {}
     for x in trigrams:
         if trigrams[x][0] > 1:
             #find spacing between these trigrams
@@ -127,13 +128,12 @@ def vigenereCipher():
         if factors[x] == maxFactor:
             keyLengths.append(x)
 
-
     #get every Nth letter from string into their own string
     #for keyLength in keyLengths:
     keyLength = 4
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for iteration in range(keyLength):
         origTextList = []
+        scores = []
         for x in text[iteration::keyLength]:
             origTextList.append(x)
         for shiftNumber in range(26):
@@ -150,13 +150,29 @@ def vigenereCipher():
                     shiftedString[character] += 1
                 else:
                     shiftedString[character] = 1
-            sorted(shiftedString, key=shiftedString.get, reverse=True)
-
-            # if best 6 = E, T, A, O, I, N
-                #score +1
-            # if worst 6 = V, K, J, X, Q, or Z
-                #score +1
-
+            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            for character in alphabet:
+                if character not in shiftedString.keys():
+                    shiftedString[character] = 0
+            sortedShift = sorted(shiftedString, key=shiftedString.get, reverse=True)
+            count = 0
+            score = 0
+            for commonLetter in 'ETAOIN':
+                if commonLetter in sortedShift[:6]:
+                    score += 1
+            for uncommonLetter in 'VKJXQZ'[-6:]:
+                if uncommonLetter in sortedShift[-6:]:
+                    score += 1
+            scores.append(score)
+        maxScore = max(scores)
+        finalScores = []
+        scoreIndex = 0;
+        for score in scores:
+            if score == maxScore:
+                finalScores.append(chr(scoreIndex + 65))
+            scoreIndex += 1
+        maybeKeys[iteration] = finalScores
+    print maybeKeys
 
 
     #do frequency analysis and see which is most like english
