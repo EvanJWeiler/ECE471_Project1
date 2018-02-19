@@ -1,4 +1,3 @@
-#import pygame
 import sys
 import random
 import operator
@@ -116,7 +115,7 @@ def vigenereCipher():
                    factors[i] += 1
                else:
                    factors[i] = 1
-    #factor with the most hits is the length of the key
+    #the top 5 factors are possible key lengths
     keyLengths = []
     maxFactors = []
     for x in range(5):
@@ -125,7 +124,7 @@ def vigenereCipher():
         if factors[x] in maxFactors:
             keyLengths.append(x)
 
-    #get every Nth letter from string into their own string
+    #for each posible key length get every Nth letter from string into their own string
     for keyLength in keyLengths:
         maybeKeysForLength = {}
         for iteration in range(keyLength):
@@ -133,6 +132,7 @@ def vigenereCipher():
             scores = []
             for x in text[iteration::keyLength]:
                 origTextList.append(x)
+            #decode these new strings with each letter of the alphabet
             for shiftNumber in range(26):
                 textList = list(origTextList)
                 for x in range(0, len(textList)):
@@ -173,6 +173,7 @@ def vigenereCipher():
             maybeKeysForLength[iteration] = finalScores
         tempKeys = maybeKeysForLength[0]
         tempKeys2 = []
+        #make a list of possible key words based on characters that were determined to be near english
         for x in range(1,len(maybeKeysForLength)):
             for tempKey in tempKeys:
                 for y in range(len(maybeKeysForLength[x]) ):
@@ -181,6 +182,7 @@ def vigenereCipher():
             tempKeys2 = []
         maybeKeys.extend(tempKeys)
     indexes = []
+    #for possible key words decode text and find IC value
     for maybeKey in maybeKeys:
         newText = []
         textCounter = 0;
@@ -195,6 +197,7 @@ def vigenereCipher():
         tempMono = createMonogram(keyText)
         indexes.append([indexOfCoincidence(tempMono),maybeKey,keyText])
     finalIndexes = []
+    #any IC values over .05 are possible solutions
     for x in indexes:
         if x[0] > .05:
             finalIndexes.append(x)
