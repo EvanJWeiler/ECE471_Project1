@@ -3,7 +3,6 @@ import sys
 import random
 import operator
 import math
-from math import sqrt
 
 dataFile = open(sys.argv[1], 'r')
 text = dataFile.read()
