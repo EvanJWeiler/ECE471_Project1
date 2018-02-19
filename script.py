@@ -167,22 +167,45 @@ def vigenereCipher():
 def permutationCipher():
     gridForm = []
     #arranging text in grid
-    for i in range(0, 13):
-        row = []
-        for j in range(0, 257):
-            #if((i+1)*(j+1) > len(textList)):
-            #    row.append("&")
-            #else:
-            row.append(textList[(i+1)*(j+1) - 1])
-        gridForm.append(row)
+    # for i in range(0, 14):
+    #     row = []
+    #     for j in range(0, 259):
+    #         if((i+1)*(j+1) > len(textList)):
+    #             row.append("&")
+    #         else:
+    #             row.append(textList[(i+1)*(j+1) - 1])
+    #     gridForm.append(row)
+
+    row = []
+    #row.append(textList[0])
+
+    for i in range(0, len(textList)):
+        if(i % 258 == 0):
+            gridForm.append(row)
+            row = []
+
+        row.append(textList[i])
+
+
 
     #import pdb; pdb.set_trace()
 
+    #gridForm.append(row)
+    for i in range(0, len(gridForm)):
+        print(''.join(gridForm[i]))
+
+
+
+
+
+
+
+
     #print text in grid
-    for i in range(len(gridForm)):
-        for j in range(len(gridForm[i])):
-            sys.stdout.write(''.join(gridForm[i][j]))
-        print()
+    # for i in range(len(gridForm)):
+    #     for j in range(len(gridForm[i])):
+    #         sys.stdout.write(''.join(gridForm[i][j]))
+    #     print()
 
     #theory
     #make ciphertext into grid
@@ -212,7 +235,7 @@ def main():
 
     # subCipher()
     #print shiftCipher()
-    #permutationCipher()
-    vigenereCipher()
+    permutationCipher()
+    #vigenereCipher()
 
 main()
