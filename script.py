@@ -4,26 +4,39 @@ import random
 import operator
 from math import sqrt
 
-
-monograms = {}
-digrams = {}
-trigrams = {}
-
 dataFile = open(sys.argv[1], 'r')
 text = dataFile.read()
 textList = list(text)
 dataFile.close()
 
+monograms = {}
+digrams = {}
+trigrams = {}
 
 def frequencyAnalysis():
-    # monograms
-    for x in text:
-        if monograms.has_key(x):
-            monograms[x] += 1
-        else:
-            monograms[x] = 1
+    global monograms
+    monograms = createMonogram(text)
+    createDigram()
+    createTrigram()
+    print "The frequency of the monograms are:"
+    printFrequency(monograms)
+    print "the Frequency of the digrams are:"
+    printFrequency(digrams)
 
-    # digrams
+def printFrequency(object):
+    for key in sorted(object):
+        print key, round(((float(object[key]) / (len(text) - 1)) * 100), 2)
+
+def createMonogram(monoText):
+    newMono = {}
+    for x in monoText:
+        if newMono.has_key(x):
+            newMono[x] += 1
+        else:
+            newMono[x] = 1
+    return newMono
+
+def createDigram():
     for i, j in zip(text[::1], text[1::1]):
         key = i + j
         if digrams.has_key(key):
@@ -31,7 +44,7 @@ def frequencyAnalysis():
         else:
             digrams[key] = 1
 
-    # trigrams
+def createTrigram():
     # for vigenere first find repeating trigrams
     index = 0
     for i, j, k in zip(text[::1], text[1::1], text[2::1]):
@@ -43,19 +56,26 @@ def frequencyAnalysis():
             trigrams[key] = [1, index]
         index += 1
 
-
-def indexOfCoincidence():
+def indexOfCoincidence(mono):
     # index of Coincidence
     val = 0
-    for x in monograms:
-        val += (float(monograms[x]) / (len(text) - 1)) ** 2
+    for x in mono:
+        val += (float(mono[x]) / (len(text) - 1)) ** 2
     val = round(val, 5)
-    print "IC: " + str(val)
-
+    return val
 
 def typeOfCipher():
-    pass
-
+    IC = indexOfCoincidence(monograms)
+    if IC > .05:
+        print "The index of coincidence is: " + str(IC)
+        print "This means the type is monoalphabetic"
+        print "Attempting a shift cipher..."
+        return 0
+    else:
+        print "The index of coincidence is: " + str(IC)
+        print "This means the type is polyalphabetic"
+        print "Attempting a vigenere cipher..."
+        return 1
 
 def shiftCipher():
     shiftNumber = 0
@@ -64,9 +84,6 @@ def shiftCipher():
 
     if(shiftNumber < 0):
         shiftNumber += 26
-
-
-
     for x in range(0, len(textList)):
         if (ord(textList[x]) - shiftNumber) < 65:
             textList[x] = chr(ord(textList[x]) - shiftNumber + 26)
@@ -74,37 +91,15 @@ def shiftCipher():
             textList[x] = chr(ord(textList[x]) - shiftNumber)
 
     textString = ''.join(textList)
-
-    return textString
-
-
-def subCipher():
-    #key = "ETAOINSHRDLUCMWFYGPBVKXJQZ"
-    #alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    #newText = text
-    #print monograms
-    #stortedMono = sorted(monograms, key=monograms.get, reverse=True)
-    #print stortedMono
-    #print newText
-    #keyIndices = [stortedMono.index(k) for k in newText]
-    #print keyIndices
-    #print ''.join(key[keyIndex] for keyIndex in keyIndices)
-    #print newText
-    #
-    #print stortedMono
-    #counter = 0;
-    #print newText
-    # for x in stortedMono:
-    #    newText = newText.replace(x, key[counter])
-    #    counter += 1
-    #print newText
-    pass
-
+    print "The type of cipher is: Shift Cipher"
+    print "The key is: " + str(shiftNumber)
+    print "Below is the decoded text using a shift cipher:"
+    print textString
 
 def vigenereCipher():
     factors = {}
     indexSpacing = []
-    maybeKeys = {}
+    maybeKeys = []
     for x in trigrams:
         if trigrams[x][0] > 1:
             #find spacing between these trigrams
@@ -121,64 +116,89 @@ def vigenereCipher():
                else:
                    factors[i] = 1
     #factor with the most hits is the length of the key
-    maxFactor = 0
     keyLengths = []
-    maxFactor = factors[sorted(factors, key=factors.get, reverse=True)[0]]
+    maxFactors = []
+    for x in range(5):
+        maxFactors.append(factors[sorted(factors, key=factors.get, reverse=True)[x]])
     for x in factors:
-        if factors[x] == maxFactor:
+        if factors[x] in maxFactors:
             keyLengths.append(x)
 
     #get every Nth letter from string into their own string
-    #for keyLength in keyLengths:
-    keyLength = 4
-    for iteration in range(keyLength):
-        origTextList = []
-        scores = []
-        for x in text[iteration::keyLength]:
-            origTextList.append(x)
-        for shiftNumber in range(26):
-            textList = list(origTextList)
-            for x in range(0, len(textList)):
-                if (ord(textList[x]) - shiftNumber) < 65:
-                    textList[x] = chr(ord(textList[x]) - shiftNumber + 26)
-                else:
-                    textList[x] = chr(ord(textList[x]) - shiftNumber)
-            shiftedString = {}
-            textString = ''.join(textList)
-            for character in textString:
-                if shiftedString.has_key(character):
-                    shiftedString[character] += 1
-                else:
-                    shiftedString[character] = 1
-            alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            for character in alphabet:
-                if character not in shiftedString.keys():
-                    shiftedString[character] = 0
-            sortedShift = sorted(shiftedString, key=shiftedString.get, reverse=True)
-            count = 0
-            score = 0
-            for commonLetter in 'ETAOIN':
-                if commonLetter in sortedShift[:6]:
-                    score += 1
-            for uncommonLetter in 'VKJXQZ'[-6:]:
-                if uncommonLetter in sortedShift[-6:]:
-                    score += 1
-            scores.append(score)
-        maxScore = max(scores)
-        finalScores = []
-        scoreIndex = 0;
-        for score in scores:
-            if score == maxScore:
-                finalScores.append(chr(scoreIndex + 65))
-            scoreIndex += 1
-        maybeKeys[iteration] = finalScores
-    print maybeKeys
+    for keyLength in keyLengths:
+        maybeKeysForLength = {}
+        for iteration in range(keyLength):
+            origTextList = []
+            scores = []
+            for x in text[iteration::keyLength]:
+                origTextList.append(x)
+            for shiftNumber in range(26):
+                textList = list(origTextList)
+                for x in range(0, len(textList)):
+                    if (ord(textList[x]) - shiftNumber) < 65:
+                        textList[x] = chr(ord(textList[x]) - shiftNumber + 26)
+                    else:
+                        textList[x] = chr(ord(textList[x]) - shiftNumber)
+                shiftedString = {}
+                textString = ''.join(textList)
+                for character in textString:
+                    if shiftedString.has_key(character):
+                        shiftedString[character] += 1
+                    else:
+                        shiftedString[character] = 1
+                alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                for character in alphabet:
+                    if character not in shiftedString.keys():
+                        shiftedString[character] = 0
 
+                #do frequency analysis and see which is most like english
+                sortedShift = sorted(shiftedString, key=shiftedString.get, reverse=True)
+                count = 0
+                score = 0
+                for commonLetter in 'ETAOIN':
+                    if commonLetter in sortedShift[:6]:
+                        score += 1
+                for uncommonLetter in 'VKJXQZ'[-6:]:
+                    if uncommonLetter in sortedShift[-6:]:
+                        score += 1
+                scores.append(score)
+            maxScore = max(scores)
+            finalScores = []
+            scoreIndex = 0;
+            for score in scores:
+                if score == maxScore:
+                    finalScores.append(chr(scoreIndex + 65))
+                scoreIndex += 1
+            maybeKeysForLength[iteration] = finalScores
+        tempKeys = maybeKeysForLength[0]
+        tempKeys2 = []
+        for x in range(1,len(maybeKeysForLength)):
+            for tempKey in tempKeys:
+                for y in range(len(maybeKeysForLength[x]) ):
+                    tempKeys2.append(tempKey + maybeKeysForLength[x][y])
+            tempKeys = list(tempKeys2)
+            tempKeys2 = []
+        maybeKeys.extend(tempKeys)
+    indexes = []
+    for maybeKey in maybeKeys:
+        newText = []
+        textCounter = 0;
+        for x in text:
+            shift = ord(maybeKey[textCounter % len(maybeKey)]) - 65
+            x = ord(x) - shift
+            if x < 65:
+                x += 26
+            newText.append(chr(x))
+            textCounter += 1
+        keyText = ''.join(newText)
+        tempMono = createMonogram(keyText)
+        indexes.append([indexOfCoincidence(tempMono),maybeKey,keyText])
+    finalIndexes = []
+    for x in indexes:
+        if x[0] > .05:
+            finalIndexes.append(x)
 
-    #do frequency analysis and see which is most like english
-    #whichever character makes it most like english is the one that is the right one
-
-
+    return finalIndexes
 
 def permutationCipher():
     gridForm = []
@@ -202,25 +222,52 @@ def permutationCipher():
     pass
 
 
-def oneTimePad():
-    pass
-
-
-def printFrequency(object):
-    for key in sorted(object):
-        print key, round(((float(object[key]) / (len(text) - 1)) * 100), 2)
-
-
 def main():
     frequencyAnalysis()
+    CipherType = typeOfCipher()
+    if CipherType == 0:
+        shiftCipher()
+        correct = raw_input("Is this correct? (y/n) ")
+        running = True
+        while running:
+            if correct == 'y':
+                print "Glad we could help!"
+                running = False
+            elif correct == 'n':
+                print "If the output is not english, it must be encoded using a subsitution cipher."
+                print "Here is a list of the monogram frequencies: "
+                printFrequency(monograms)
+                print "Here is a list of the digram frequencies: "
+                printFrequency(digrams)
+                print "Above are the monogram and digram frequencies. The text must be encoded using a subsitution cipher. \nDecoding must be done manually. Good Luck!"
+                running = False
+            else:
+                correct = raw_input("Invalid input, Please try again: (y/n) ")
 
-    # printFrequency(monograms)
-    # printFrequency(digrams)
-    # indexOfCoincidence()
-
-    # subCipher()
-    #print shiftCipher()
-    #permutationCipher()
-    vigenereCipher()
+    else:
+        correct = 'x'
+        possibleSolutions = vigenereCipher()
+        print "We found " + str(len(possibleSolutions)) + " possible keys."
+        for solution in possibleSolutions:
+            print "The type of cipher is: Vigenere Cipher"
+            print "The key for this solution is: " + solution[1]
+            print "The decoded text is:"
+            print solution[2]
+            correct = raw_input("Is this correct? (y/n) ")
+            running = True
+            while running:
+                if correct == 'y':
+                    print "Glad we could help!"
+                    running = False
+                    return
+                elif correct == 'n' and solution != possibleSolutions[len(possibleSolutions)-1]:
+                    print "Here is another possible answer:\n"
+                    running = False
+                elif correct == 'n' and solution == possibleSolutions[len(possibleSolutions)-1]:
+                    print "The code must be encoded with a One Time Pad or a Permutation Cipher."
+                    print "These must be done with more information. Good Luck!"
+                    running = False
+                else:
+                    correct = raw_input("Invalid input, Please try again: (y/n) ")
 
 main()
