@@ -204,16 +204,7 @@ def vigenereCipher():
 def permutationCipher(keyLength):
     gridForm = []
     row = []
-    currWordMax = 0
-    wordMaxKeyLength = 0
-    #row.append(textList[0])
-    #3349 characters (len(textList))
-    #8x258 (#ofchar)mod(keylength)x(ceil(characters/keylength))
-    #5x257 [keylength - (#ofchar)mod(keylength)]x(floor(characters/keylength))
 
-    #import pdb; pdb.set_trace()
-
-    #begin
     fullLines = len(textList) % keyLength #8
     fullLinesLength = math.ceil(len(textList)/float(keyLength)) #258
     shortLines = (keyLength - (len(textList) % keyLength)) #5
@@ -257,14 +248,6 @@ def permutationCipher(keyLength):
 
     transposeGridFormOneLineString = ''.join(transposeGridFormOneLine) #converting to string
     transposeGridFormOneLineString = transposeGridFormOneLineString.replace("&", "") #removing placeholder characters
-
-    #import pdb; pdb.set_trace()
-    #wordMax = transposeGridFormOneLineString.count("THE") + transposeGridFormOneLineString.count("AND")
-    # if(transposeGridFormOneLineString.count("THE") > currWordMax):
-    #     currWordMax = transposeGridFormOneLineString.count("THE")
-    #     wordMaxKeyLength = keyLength
-
-    #end
 
     print(transposeGridFormOneLineString)
     #print(transposeGridFormOneLineString)
